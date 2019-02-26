@@ -1,4 +1,4 @@
-### Install and Configure Apache Kafka on Ubuntu 18.04
+# Install and Configure Apache Kafka on Ubuntu 18.04
 
 this github repository contain a complete guide to start with Apache Kafka 2.11
 
@@ -37,21 +37,16 @@ please visit this link for more informations : https://kafka.apache.org/quicksta
 
 ### 3.0 integration with apache spark
 
-    // 1.0  arguments verification 
-    if(args.length < 4 )
-    {
-      //System.err.println(" Usage :  <Hostname> <Port>");
-      System.err.println("Usage: Essentiel <host> <port> ")
-      System.exit(1)
-    }
-    // 2.0 create the Spark  Configuration
+    // 1.0 create the Spark  Configuration
     val sparkConf = new SparkConf().setAppName("NetworkWordCount").setMaster("local[3]")
-    // 3.0 Create the Spark Streaming context with a 60 second batch size 
+    // 2.0 Create the Spark Streaming context with a 60 second batch size 
     val ssc = new StreamingContext(sparkConf, Seconds(30))
-    // 4.0 Create a socket stream on target ip:port 
+    // 3.0 Create a socket stream on target ip:port 
      val kafkaParam=Map("metadata.broker.list"->"localhost:9092")
     val topics=List("test").toSet
     val reciver =KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParam, topics).map(_._2)
+    // 4.0 read from topic
+	val dstream = reciver.flatMap(_.split("\n")).persist 
 
 ### Notes importants: 
 
