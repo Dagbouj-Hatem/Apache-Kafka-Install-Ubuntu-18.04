@@ -1,5 +1,7 @@
 ### Install and Configure Apache Kafka on Ubuntu 18.04
 
+this github repository contain a complete guide to start with Apache Kafka 2.11
+
 ## Introduction
 Apache Kafka is an open-source scalable and high-throughput messaging system developed by the Apache Software Foundation written in Scala. Apache Kafka is specially designed to allow a single cluster to serve as the central data backbone for a large environment. It has a much higher throughput compared to other message brokers systems like ActiveMQ and RabbitMQ. It is capable of handling large volumes of real-time data efficiently. You can deploy Kafka on single Apache server or in a distributed clustered environment.
 
@@ -31,8 +33,29 @@ Link : https://devops.ionos.com/tutorials/install-and-configure-apache-kafka-on-
 
 ### 2.0 Install and Start Kafka Server
 
-please visit this link to  more informations : https://kafka.apache.org/quickstart
+please visit this link for more informations : https://kafka.apache.org/quickstart
 
+### 3.0 integration with apache spark
+
+    // 1.0  arguments verification 
+    if(args.length < 4 )
+    {
+      //System.err.println(" Usage :  <Hostname> <Port>");
+      System.err.println("Usage: Essentiel <host> <port> ")
+      System.exit(1)
+    }
+    // 2.0 create the Spark  Configuration
+    val sparkConf = new SparkConf().setAppName("NetworkWordCount").setMaster("local[3]")
+    // 3.0 Create the Spark Streaming context with a 60 second batch size 
+    val ssc = new StreamingContext(sparkConf, Seconds(30))
+    // 4.0 Create a socket stream on target ip:port 
+     val kafkaParam=Map("metadata.broker.list"->"localhost:9092")
+    val topics=List("test").toSet
+    val reciver =KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParam, topics).map(_._2)
+
+### Notes importants: 
+
+    This version  is compatible with scala 2.11
 
 
 
